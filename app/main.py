@@ -1,8 +1,15 @@
 from fastapi import FastAPI
-
+from contextlib import asynccontextmanager
 from app.routers.api_router import api_router
 from app.core.config import settings
+from app.db import create_tables
 
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    await create_tables()
+    print("Tables created")
+    yield
 
 def create_app() -> FastAPI:
     application = FastAPI(

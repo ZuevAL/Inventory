@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class Product(BaseModel):
+class SchemaProduct(BaseModel):
     name: str
     barcode: str
 
