@@ -1,0 +1,2 @@
+"""Inventory API application package."""
+
