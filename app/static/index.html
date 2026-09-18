@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Добавить товар</title>
+    <link rel='stylesheet' href='app/static/index_scr.css'>
+</head>
+<body>
+<main>
+    <h1>Новый товар</h1>
+    <form id="product-form">
+        <label for="name">Название</label>
+        <input id="name" name="name" required autocomplete="off">
+
+        <label for="barcode">Штрихкод</label>
+        <input id="barcode" name="barcode" required autocomplete="off">
+
+        <button type="submit">Сохранить</button>
+    </form>
+    <p id="message" aria-live="polite"></p>
+</main>
+
+<script src="app/static/index_scr.js"></script>
+</body>
+</html>
