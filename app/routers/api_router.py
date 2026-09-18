@@ -1,5 +1,8 @@
 from fastapi import APIRouter
 from app.routers.products import router as products_router
+from app.routers.shelves import router as shelves_router
+
 
 api_router = APIRouter()
 api_router.include_router(products_router)
+api_router.include_router(shelves_router)
