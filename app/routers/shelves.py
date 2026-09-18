@@ -6,7 +6,7 @@ from app.models.shelf import Shelf as ShelfModel
 from app.schemas.shelves import SchemaShelves
 
 
-router = APIRouter(prefix="/shelves")
+router = APIRouter(prefix="/shelves", tags=['Полки'])
 
 @router.post("/")
 async def create_shelf(shelf: SchemaShelves, db: AsyncSession = Depends(get_db)):
