@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.products import Product as ProductModel
+from app.models.product import Product as ProductModel
 from app.schemas.products import SchemaProduct
 
 
