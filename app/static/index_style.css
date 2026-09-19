@@ -6,7 +6,7 @@ body {
         }
 
         main {
-            width: min(400px, calc(100% - 40px));
+            width: min(440px, calc(100% - 40px));
             margin: 80px auto;
             padding: 28px;
             background: white;
@@ -17,6 +17,28 @@ body {
         h1 {
             margin: 0 0 24px;
             font-size: 24px;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            margin: 0 0 24px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        nav a {
+            padding: 7px 9px;
+            border-radius: 6px;
+            color: #4b5563;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: #e8efff;
+            color: #1d4ed8;
         }
 
         label {
@@ -34,6 +56,11 @@ body {
 
         input {
             border: 1px solid #bbb;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            outline: 2px solid rgba(37, 99, 235, 0.15);
         }
 
         button {
@@ -56,3 +83,14 @@ body {
 
         .success { color: #16803b; }
         .error { color: #c62828; }
+
+        @media (max-width: 520px) {
+            main {
+                margin: 24px auto;
+                padding: 22px;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+        }

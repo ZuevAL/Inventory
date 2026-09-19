@@ -4,10 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Добавить товар</title>
-    <link rel='stylesheet' href='app/static/index_scr.css'>
+    <link rel="stylesheet" href="/static/index_style.css">
 </head>
 <body>
 <main>
+    <nav aria-label="Разделы склада">
+        <a class="active" href="/static/index.html">Товар</a>
+        <a href="/static/shelf.html">Полка</a>
+        <a href="/static/shelf_stock.html">Товар на полке</a>
+    </nav>
     <h1>Новый товар</h1>
     <form id="product-form">
         <label for="name">Название</label>
@@ -21,6 +26,6 @@
     <p id="message" aria-live="polite"></p>
 </main>
 
-<script src="app/static/index_scr.js"></script>
+<script src="/static/index_scr.js"></script>
 </body>
 </html>
