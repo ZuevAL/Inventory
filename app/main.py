@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.routers.api_router import api_router
 from app.core.config import settings
@@ -30,3 +31,5 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+app.mount("/static" ,StaticFiles(directory="app/static", html=True))
