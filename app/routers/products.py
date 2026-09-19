@@ -6,7 +6,7 @@ from app.models.product import Product as ProductModel
 from app.schemas.products import SchemaProduct
 
 
-router = APIRouter(prefix="/products")
+router = APIRouter(prefix="/products", tags=['Продукты'])
 
 @router.post("/")
 async def create_product(product: SchemaProduct, db: AsyncSession = Depends(get_db)):
