@@ -14,7 +14,7 @@
         <a href="/static/shelf_stock.html">Товар на полке</a>
     </nav>
     <h1>Новый товар</h1>
-    <form id="product-form">
+    <form action="/api/v1/products/form" method="post" accept-charset="utf-8">
         <label for="name">Название</label>
         <input id="name" name="name" required autocomplete="off">
 
@@ -23,9 +23,6 @@
 
         <button type="submit">Сохранить</button>
     </form>
-    <p id="message" aria-live="polite"></p>
 </main>
-
-<script src="/static/index_scr.js"></script>
 </body>
 </html>

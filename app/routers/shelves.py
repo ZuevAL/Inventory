@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Form
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -15,6 +17,15 @@ async def create_shelf(shelf: SchemaShelves, db: AsyncSession = Depends(get_db))
     await db.commit()
     await db.refresh(db_shelf)
     return db_shelf
+
+
+
+@router.post("/form")
+async def create_shelves(
+    code : Annotated[str, Form()],
+    db: AsyncSession =Depends (get_db)
+):
+    return await create_shelf(SchemaShelves(code=code), db)
 
 
 @router.get("/")

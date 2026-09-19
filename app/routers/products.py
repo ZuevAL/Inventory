@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Form
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -15,6 +17,15 @@ async def create_product(product: SchemaProduct, db: AsyncSession = Depends(get_
     await db.commit()
     await db.refresh(db_product)
     return product
+
+
+@router.post("/form")
+async def create_product_form(
+    name: Annotated[str, Form()],
+    barcode: Annotated[str, Form()],
+    db: AsyncSession = Depends(get_db),
+):
+    return await create_product(SchemaProduct(name=name, barcode=barcode), db)
 
 
 @router.get("/")

@@ -15,15 +15,12 @@
     </nav>
 
     <h1>Новая полка</h1>
-    <form id="shelf-form">
+    <form action="/api/v1/shelves/form" method="post" accept-charset="utf-8">
         <label for="code">Код полки</label>
         <input id="code" name="code" required autocomplete="off" autofocus>
 
         <button type="submit">Сохранить</button>
     </form>
-    <p id="message" aria-live="polite"></p>
 </main>
-
-<script src="/static/shelf.js"></script>
 </body>
 </html>

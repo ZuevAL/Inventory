@@ -15,9 +15,9 @@
     </nav>
 
     <h1>Добавить товар на полку</h1>
-    <form id="shelf-stock-form">
-        <label for="barcode">Штрихкод товара</label>
-        <input id="barcode" name="barcode" required autocomplete="off" autofocus>
+    <form action="/api/v1/stock/form" method="post" accept-charset="utf-8">
+        <label for="product-barcode">Штрихкод товара</label>
+        <input id="product-barcode" name="product_barcode" required autocomplete="off" autofocus>
 
         <label for="shelf-code">Код полки</label>
         <input id="shelf-code" name="shelf_code" required autocomplete="off">
@@ -27,9 +27,6 @@
 
         <button type="submit">Добавить</button>
     </form>
-    <p id="message" aria-live="polite"></p>
 </main>
-
-<script src="/static/shelf_stock.js"></script>
 </body>
 </html>
