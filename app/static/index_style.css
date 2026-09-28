@@ -1,4 +1,10 @@
-body {
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
             margin: 0;
             font-family: Arial, sans-serif;
             background: #f4f5f7;
@@ -20,7 +26,8 @@ body {
         }
 
         nav {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
             margin: 0 0 24px;
             padding-bottom: 18px;
@@ -28,11 +35,19 @@ body {
         }
 
         nav a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+            width: 100%;
             padding: 7px 9px;
             border-radius: 6px;
             color: #4b5563;
             font-size: 14px;
+            line-height: 1.25;
+            text-align: center;
             text-decoration: none;
+            overflow-wrap: anywhere;
         }
 
         nav a:hover,
@@ -48,7 +63,6 @@ body {
 
         input, button {
             width: 100%;
-            box-sizing: border-box;
             padding: 11px;
             font: inherit;
             border-radius: 7px;
@@ -76,6 +90,17 @@ body {
             cursor: wait;
         }
 
+        button.danger {
+            background: #c62828;
+        }
+
+        .hint {
+            margin: -12px 0 20px;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
         #message {
             min-height: 20px;
             margin: 18px 0 0;
@@ -91,6 +116,6 @@ body {
             }
 
             nav {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
         }

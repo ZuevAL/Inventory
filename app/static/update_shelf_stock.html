@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Изменить количество товара</title>
+    <link rel="stylesheet" href="/static/index_style.css">
+</head>
+<body>
+<main>
+    <nav aria-label="Разделы склада">
+        <a href="/static/index.html">Добавить товар</a>
+        <a href="/static/shelf.html">Создать полку</a>
+        <a href="/static/shelf_stock.html">Привязать товар к полке</a>
+        <a href="/static/delete_product.html">Удалить товар</a>
+        <a href="/static/delete_shelf_stock.html">Снять с полки</a>
+        <a class="active" href="/static/update_shelf_stock.html">Изменить количество</a>
+    </nav>
+
+    <h1>Изменить количество</h1>
+    <p class="hint">Укажите положительное число для добавления товара или отрицательное — для списания.</p>
+
+    <form action="/api/v1/stock/patch-form" method="post" accept-charset="utf-8">
+        <label for="product-barcode">Штрихкод товара</label>
+        <input id="product-barcode" name="barcode" required autocomplete="off" autofocus>
+
+        <label for="shelf-code">Код полки</label>
+        <input id="shelf-code" name="shelf_code" required autocomplete="off">
+
+        <label for="quantity-change">Изменение количества</label>
+        <input id="quantity-change" name="adding" type="number" step="1" value="1" required>
+
+        <button type="submit">Изменить</button>
+    </form>
+</main>
+</body>
+</html>

@@ -9,9 +9,12 @@
 <body>
 <main>
     <nav aria-label="Разделы склада">
-        <a class="active" href="/static/index.html">Товар</a>
-        <a href="/static/shelf.html">Полка</a>
-        <a href="/static/shelf_stock.html">Товар на полке</a>
+        <a class="active" href="/static/index.html">Добавить товар</a>
+        <a href="/static/shelf.html">Создать полку</a>
+        <a href="/static/shelf_stock.html">Привязать товар к полке</a>
+        <a href="/static/delete_product.html">Удалить товар</a>
+        <a href="/static/delete_shelf_stock.html">Снять с полки</a>
+        <a href="/static/update_shelf_stock.html">Изменить количество</a>
     </nav>
     <h1>Новый товар</h1>
     <form action="/api/v1/products/form" method="post" accept-charset="utf-8">

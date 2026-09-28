@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Добавить товар на полку</title>
+    <title>Снять товар с полки</title>
     <link rel="stylesheet" href="/static/index_style.css">
 </head>
 <body>
@@ -11,24 +11,23 @@
     <nav aria-label="Разделы склада">
         <a href="/static/index.html">Добавить товар</a>
         <a href="/static/shelf.html">Создать полку</a>
-        <a class="active" href="/static/shelf_stock.html">Привязать товар к полке</a>
+        <a href="/static/shelf_stock.html">Привязать товар к полке</a>
         <a href="/static/delete_product.html">Удалить товар</a>
-        <a href="/static/delete_shelf_stock.html">Снять с полки</a>
+        <a class="active" href="/static/delete_shelf_stock.html">Снять с полки</a>
         <a href="/static/update_shelf_stock.html">Изменить количество</a>
     </nav>
 
-    <h1>Добавить товар на полку</h1>
-    <form action="/api/v1/stock/form" method="post" accept-charset="utf-8">
+    <h1>Снять товар с полки</h1>
+    <p class="hint">Товар останется в каталоге и будет удалён только с выбранной полки.</p>
+
+    <form action="/api/v1/stock/delete-form" method="post" accept-charset="utf-8">
         <label for="product-barcode">Штрихкод товара</label>
-        <input id="product-barcode" name="product_barcode" required autocomplete="off" autofocus>
+        <input id="product-barcode" name="barcode" required autocomplete="off">
 
         <label for="shelf-code">Код полки</label>
         <input id="shelf-code" name="shelf_code" required autocomplete="off">
 
-        <label for="quantity">Количество</label>
-        <input id="quantity" name="quantity" type="number" min="1" step="1" value="1" required>
-
-        <button type="submit">Добавить</button>
+        <button class="danger" type="submit">Снять с полки</button>
     </form>
 </main>
 </body>

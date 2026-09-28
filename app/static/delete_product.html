@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Удалить товар</title>
+    <link rel="stylesheet" href="/static/index_style.css">
+</head>
+<body>
+<main>
+    <nav aria-label="Разделы склада">
+        <a href="/static/index.html">Добавить товар</a>
+        <a href="/static/shelf.html">Создать полку</a>
+        <a href="/static/shelf_stock.html">Привязать товар к полке</a>
+        <a class="active" href="/static/delete_product.html">Удалить товар</a>
+        <a href="/static/delete_shelf_stock.html">Снять с полки</a>
+        <a href="/static/update_shelf_stock.html">Изменить количество</a>
+    </nav>
+
+    <h1>Удалить товар</h1>
+    <p class="hint">Товар будет удалён из каталога и со всех полок.</p>
+
+    <form action="/api/v1/products/del_any" method="post" accept-charset="utf-8">
+        <label for="barcode">Штрихкод товара</label>
+        <input id="barcode" name="barcode" required autocomplete="off" autofocus>
+
+        <button class="danger" type="submit">Удалить</button>
+    </form>
+</main>
+</body>
+</html>

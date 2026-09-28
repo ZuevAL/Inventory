@@ -74,6 +74,14 @@ async def delete_product_by_barcode(barcode:str ,shelf_code:str, db :AsyncSessio
     await db.commit()
 
 
+@router.post("/delete-form")
+async def delete_from_shelf_form(
+    barcode: Annotated [str, Form()],
+    shelf_code:Annotated [str, Form()],
+    db :AsyncSession = Depends(get_db)):
+    return await delete_product_by_barcode(barcode, shelf_code,db)
+
+
 @router.patch("/")
 async def update_quantity_in_shelves(barcode:str, shelf_code:str, adding:int,
                                       db: AsyncSession =Depends (get_db)):
@@ -91,4 +99,13 @@ async def update_quantity_in_shelves(barcode:str, shelf_code:str, adding:int,
     product.quantity += adding
     await db.commit()
 
+
+@router.post("/patch-form")
+async def update_quantity_form(
+    barcode:Annotated[str,Form()],
+    shelf_code:Annotated[ str, Form()],
+    adding: Annotated[int, Form()],
+    db: AsyncSession = Depends(get_db)
+):
+    return await update_quantity_in_shelves(barcode, shelf_code, adding, db)
 

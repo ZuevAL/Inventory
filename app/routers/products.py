@@ -48,3 +48,11 @@ async def delete_product(barcode:str, db: AsyncSession = Depends(get_db)):
     
     await db.delete(product)
     await db.commit()
+
+
+@router.post("/del_any")
+async def delete_product_form(
+    barcode: Annotated[str ,Form()],
+    db:AsyncSession = Depends(get_db)
+):
+    return await delete_product(barcode, db)
