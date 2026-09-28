@@ -1,12 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, HTTPException
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from app.models.product import Product as ProductModel
 from app.schemas.products import SchemaProduct
-
+from app.models.shelf_stock import ShelfStock as ShelfStockModel
 
 router = APIRouter(prefix="/products", tags=['Продукты'])
 
@@ -34,3 +34,17 @@ async def read_products(db: AsyncSession = Depends(get_db)):
     result = await db.execute(query)
     products = result.scalars().all()
     return products
+
+
+@router.delete("/")
+async def delete_product(barcode:str, db: AsyncSession = Depends(get_db)):
+    query = select(ProductModel).where(ProductModel.barcode == barcode)
+    result = await db.execute(query)
+    product = result.scalar_one_or_none()
+    if product is None :
+        raise HTTPException(status_code=404, detail="Товар не найден")
+
+    await db.execute(delete(ShelfStockModel).where(ShelfStockModel.product_id == product.id))
+    
+    await db.delete(product)
+    await db.commit()
