@@ -1,11 +1,10 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, Form, HTTPException
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from app.models.product import Product as ProductModel
-from app.schemas.products import SchemaProduct
+from app.models import Product as ProductModel
+from app.schemas import SchemaProduct
 from app.models.shelf_stock import ShelfStock as ShelfStockModel
 
 router = APIRouter(prefix="/products", tags=['Продукты'])

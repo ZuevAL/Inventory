@@ -1,11 +1,10 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, Form
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models.shelf import Shelf as ShelfModel
-from app.schemas.shelves import SchemaShelves
+from app.models import Shelf as ShelfModel
+from app.schemas import SchemaShelves
 
 
 router = APIRouter(prefix="/shelves", tags=['Полки'])

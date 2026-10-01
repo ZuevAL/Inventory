@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class Quantity_change(BaseModel):
+class QuantityChange(BaseModel):
     change: int

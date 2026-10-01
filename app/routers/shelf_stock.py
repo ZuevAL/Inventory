@@ -1,13 +1,12 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, Form, HTTPException
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models.product import Product as ProductModel
-from app.models.shelf import Shelf as ShelfModel
-from app.models.shelf_stock import ShelfStock as ShelfStockModel
-from app.schemas.shelf_stock import SchemaShelfStock
+from app.models import Product as ProductModel
+from app.models import Shelf as ShelfModel
+from app.models import ShelfStock as ShelfStockModel
+from app.schemas import SchemaShelfStock
 
 
 router = APIRouter(prefix="/stock", tags=['Наличие товаров'])
