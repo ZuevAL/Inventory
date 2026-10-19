@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Пользователи</title>
+    <link rel="stylesheet" href="/static/index_style.css">
+    <script src="/static/auth.js" defer></script>
+</head>
+<body data-page="users">
+<div class="app-shell"><aside class="sidebar">
+  <a class="brand" href="index.html" aria-label="Склад — главная">
+    <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 12 6.5v13L16 29 4 22.5v-13L16 3Z"/><path d="m4.8 9.8 11.2 6.1 11.2-6.1M16 15.9V29M10 6.2l12 6.4"/></svg></span><span>Склад</span>
+  </a>
+  <nav class="sidebar-nav" aria-label="Разделы склада"><p class="nav-label">КАТАЛОГ</p><a href="index.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8.5 4.5v9L12 21l-8.5-4.5v-9L12 3Z"/><path d="m3.8 7.8 8.2 4.4 8.2-4.4M12 12.2V21M7.8 5.2l8.4 4.5"/></svg></span><span>Товары</span></a><p class="nav-label">СКЛАД</p><a href="shelf.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 9h16M4 15h16M9 4v5m6-5v5m-6 1v5m6-5v5m-6 1v4m6-4v4"/></svg></span><span>Полки</span></a><a href="shelf_stock.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M7 4v6m10-6v6M7 14v6m10-6v6"/><path d="M9 12h6m-2-2 2 2-2 2"/></svg></span><span>Разместить товар</span></a><a href="update_shelf_stock.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11m7 9V4m7 16v-7"/></svg></span><span>Остатки</span></a><a href="delete_shelf_stock.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M7 4v6m10-6v6M7 14v6m10-6v6"/><path d="M9 12h6m-2-2 2 2-2 2"/></svg></span><span>Снять с полки</span></a><p class="nav-label">УПРАВЛЕНИЕ</p><a href="delete_product.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16m-10 4v7m4-7v7M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></span><span>Удалить товар</span></a><a class="active" aria-current="page" href="users.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20v-1.5A4.5 4.5 0 0 1 8 14h2a4.5 4.5 0 0 1 4.5 4.5V20m1-15a3 3 0 0 1 0 6m2 3a4.5 4.5 0 0 1 3 4.5V20"/></svg></span><span>Пользователи</span></a><a href="password.html"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></svg></span><span>Сменить пароль</span></a></nav>
+  <div class="sidebar-footer"><span class="status-dot"></span><span>Основной склад</span><small>Учёт товаров и остатков</small></div>
+</aside>
+<main class="page-main">
+  <div class="page-topbar"><span class="topbar-caption">РАБОЧЕЕ ПРОСТРАНСТВО</span><span class="topbar-status"><i></i> Основной склад</span></div>
+  <header class="page-heading"><h1>Пользователи</h1><p>Управляйте доступом сотрудников к складской системе.</p></header>
+  <section class="content-card is-wide"><form id="create-user" method="post" action="/api/v1/users/">
+        <label for="login">Логин</label>
+        <input id="login" name="login" required minlength="3" maxlength="32" pattern="[A-Za-z0-9._\-]{3,32}" autocomplete="off" autocapitalize="none" spellcheck="false">
+        <label for="full-name">ФИО</label>
+        <input id="full-name" name="full_name" required maxlength="255" autocomplete="off">
+        <label for="role">Роль</label>
+        <select id="role" name="role"><option value="worker">Работник</option><option value="admin">Администратор</option></select>
+        <button type="submit">Создать аккаунт</button>
+    </form>
+    <section id="temporary-result" class="temporary-result" hidden>
+        <h2>Временный пароль</h2>
+        <p>Логин: <strong id="temporary-login"></strong></p>
+        <p><code id="temporary-password"></code></p>
+        <p>Передайте пароль пользователю безопасным способом. После закрытия его нельзя получить повторно — только сбросить.</p>
+        <a href="login.html">Перейти ко входу</a>
+        <button id="hide-temporary" type="button" class="secondary">Скрыть пароль</button>
+    </section>
+    <p id="message" role="status" aria-live="polite"></p>
+    <h2>Созданные аккаунты</h2>
+    <div class="table-scroll"><table>
+        <thead><tr><th>Логин</th><th>ФИО</th><th>Роль</th><th>Пароль</th><th>Действия</th></tr></thead>
+        <tbody id="user-list"></tbody>
+    </table></div></section>
+</main></div>
+</body>
+</html>
+

@@ -1,8 +1,19 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from app.models.base import Base
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+from app.core.config import settings
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./sql_app.db"
+
+SQLALCHEMY_DATABASE_URL = settings.database_url
+
+
+@event.listens_for(Engine, "connect")
+def configure_sqlite_connection(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.execute("PRAGMA busy_timeout=10000")
+    cursor.close()
 
 engine=create_async_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -17,13 +28,9 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def create_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-       
+
 
 async def get_db():
     async with AsyncSessionLocal() as db:
         yield db
-        
 

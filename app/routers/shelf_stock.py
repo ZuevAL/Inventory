@@ -3,13 +3,14 @@ from fastapi import APIRouter, Depends, Form, HTTPException
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models import Product as ProductModel
-from app.models import Shelf as ShelfModel
-from app.models import ShelfStock as ShelfStockModel
-from app.schemas import SchemaShelfStock
+from app.models.product import Product as ProductModel
+from app.models.shelf import Shelf as ShelfModel
+from app.models.shelf_stock import ShelfStock as ShelfStockModel
+from app.schemas.shelf_stock import SchemaShelfStock
+from app.dependencies import get_current_auth, require_admin
 
 
-router = APIRouter(prefix="/stock", tags=['Наличие товаров'])
+router = APIRouter(prefix="/stock", tags=['Наличие товаров'], dependencies=[Depends(get_current_auth)])
 
 @router.post("/")
 async def create_stock(stock: SchemaShelfStock, db: AsyncSession = Depends(get_db)):
@@ -55,7 +56,7 @@ async def read_stock(db: AsyncSession = Depends(get_db)):
     stock = result.scalars().all()
     return stock
 
-@router.delete("/")
+@router.delete("/", dependencies=[Depends(require_admin)])
 async def delete_product_by_barcode(barcode:str ,shelf_code:str, db :AsyncSession = Depends(get_db)):
     del_id = await db.scalar(select(ProductModel.id).where(ProductModel.barcode == barcode))
     shelf_id  =await db.scalar(select(ShelfModel.id).where(ShelfModel.code==shelf_code))
@@ -69,11 +70,14 @@ async def delete_product_by_barcode(barcode:str ,shelf_code:str, db :AsyncSessio
     if shelf_id is None:
         raise HTTPException(status_code=404, detail="Полка с таким кодом не найдена")
 
+    if product is None:
+        raise HTTPException(status_code=404, detail="Товар на этой полке не найден")
+
     await db.delete(product)
     await db.commit()
 
 
-@router.post("/delete-form")
+@router.post("/delete-form", dependencies=[Depends(require_admin)])
 async def delete_from_shelf_form(
     barcode: Annotated [str, Form()],
     shelf_code:Annotated [str, Form()],
