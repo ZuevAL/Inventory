@@ -4,10 +4,11 @@ from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.models import Product as ProductModel
-from app.schemas import SchemaProduct
+from app.schemas.products import SchemaProduct
 from app.models.shelf_stock import ShelfStock as ShelfStockModel
+from app.dependencies import get_current_auth, require_admin
 
-router = APIRouter(prefix="/products", tags=['Продукты'])
+router = APIRouter(prefix="/products", tags=['Продукты'], dependencies=[Depends(get_current_auth)])
 
 @router.post("/")
 async def create_product(product: SchemaProduct, db: AsyncSession = Depends(get_db)):
@@ -35,7 +36,7 @@ async def read_products(db: AsyncSession = Depends(get_db)):
     return products
 
 
-@router.delete("/")
+@router.delete("/", dependencies=[Depends(require_admin)])
 async def delete_product(barcode:str, db: AsyncSession = Depends(get_db)):
     query = select(ProductModel).where(ProductModel.barcode == barcode)
     result = await db.execute(query)
@@ -49,7 +50,7 @@ async def delete_product(barcode:str, db: AsyncSession = Depends(get_db)):
     await db.commit()
 
 
-@router.post("/del_any")
+@router.post("/del_any", dependencies=[Depends(require_admin)])
 async def delete_product_form(
     barcode: Annotated[str ,Form()],
     db:AsyncSession = Depends(get_db)

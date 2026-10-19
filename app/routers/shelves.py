@@ -3,11 +3,12 @@ from fastapi import APIRouter, Depends, Form
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models import Shelf as ShelfModel
-from app.schemas import SchemaShelves
+from app.models.shelf import Shelf as ShelfModel
+from app.schemas.shelves import SchemaShelves
+from app.dependencies import get_current_auth
 
 
-router = APIRouter(prefix="/shelves", tags=['Полки'])
+router = APIRouter(prefix="/shelves", tags=['Полки'], dependencies=[Depends(get_current_auth)])
 
 @router.post("/")
 async def create_shelf(shelf: SchemaShelves, db: AsyncSession = Depends(get_db)):
