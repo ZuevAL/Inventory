@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException, Query
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -50,11 +50,30 @@ async def create_stock_form(
 
 
 @router.get("/")
-async def read_stock(db: AsyncSession = Depends(get_db)):
-    query = select(ShelfStockModel).order_by(ShelfStockModel.id).limit(5)
+async def read_stock(
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=500)] = 5,
+    db: AsyncSession = Depends(get_db),
+):
+    # UI needs product and shelf names, not just foreign keys.
+    query = (
+        select(
+            ShelfStockModel.id,
+            ShelfStockModel.product_id,
+            ShelfStockModel.shelf_id,
+            ProductModel.name.label("product_name"),
+            ProductModel.barcode.label("product_barcode"),
+            ShelfModel.code.label("shelf_code"),
+            ShelfStockModel.quantity,
+        )
+        .join(ProductModel, ProductModel.id == ShelfStockModel.product_id)
+        .join(ShelfModel, ShelfModel.id == ShelfStockModel.shelf_id)
+        .order_by(ShelfStockModel.id)
+        .offset(offset)
+        .limit(limit)
+    )
     result = await db.execute(query)
-    stock = result.scalars().all()
-    return stock
+    return [dict(row) for row in result.mappings().all()]
 
 @router.delete("/", dependencies=[Depends(require_admin)])
 async def delete_product_by_barcode(barcode:str ,shelf_code:str, db :AsyncSession = Depends(get_db)):
@@ -111,4 +130,3 @@ async def update_quantity_form(
     db: AsyncSession = Depends(get_db)
 ):
     return await update_quantity_in_shelves(barcode, shelf_code, adding, db)
-

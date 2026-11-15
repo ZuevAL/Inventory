@@ -34,6 +34,13 @@
 Веб-интерфейс: [страница входа](http://127.0.0.1:8000/static/login.html).
 Открывайте HTML через сервер, не двойным щелчком по файлу. `/` остаётся JSON.
 
+На складских вкладках справа от формы отображается таблица товаров, полок или
+остатков (товар, штрихкод, полка, количество). Сначала видны до 5 записей;
+«Показать все» загружает весь список, «Свернуть» возвращает первые 5.
+После успешного действия таблица обновляется автоматически. На узком экране она
+располагается под формой. GET `/api/v1/products/`, `/api/v1/shelves/` и
+`/api/v1/stock/` принимают `offset` (от 0) и `limit` (1–500, по умолчанию 5).
+
 ## Первый администратор
 
 Только на базе без администратора:
@@ -137,7 +144,9 @@ cookie. Токен подписан сервером и связан с вход
 .\.venv\Scripts\python.exe -m pip install pytest==9.1.1
 .\.venv\Scripts\python.exe -m pytest -q
 node --check app/static/auth.js
+node --check app/static/panel.js
 node tests/auth_client.test.cjs
+node tests/panel.test.cjs
 .\.venv\Scripts\python.exe -m alembic check
 ```
 
@@ -170,6 +179,5 @@ Git при необходимости — отдельная операция.
 - API: http://127.0.0.1:8000
 - Swagger UI: http://127.0.0.1:8000/docs
 - Health-check: http://127.0.0.1:8000/api/v1/health
-
 
 

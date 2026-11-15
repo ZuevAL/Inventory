@@ -229,7 +229,7 @@ const InventoryAuth = (() => {
             if (page === "users" || /\/delete_(product|shelf_stock)\.html$/.test(location.pathname)) {
                 document.querySelectorAll("main form, main table").forEach(element => { element.hidden = true; });
                 show("Это действие доступно только администратору.", true);
-                return;
+                return false;
             }
         }
         if (page === "users") await initUsers();
@@ -252,10 +252,13 @@ const InventoryAuth = (() => {
                             method: "POST", body: new URLSearchParams(new FormData(form)),
                         });
                         show("Действие выполнено.");
+                        // Refresh the list after successful warehouse changes.
+                        document.dispatchEvent(new Event("inventory:changed"));
                     } catch (error) { fail(error); }
                 });
             });
         }
+        return true;
     }
     async function init() {
         const page = document.body.dataset.page || "warehouse";
@@ -263,11 +266,18 @@ const InventoryAuth = (() => {
         const blocker = event => event.preventDefault();
         document.addEventListener("submit", blocker, true);
         try {
+            let ready = false;
             if (page === "login") await initLogin();
-            else await initProtected(page);
+            else ready = await initProtected(page);
             document.removeEventListener("submit", blocker, true);
+            if (ready) {
+                globalThis.InventoryApi.ready = true;
+                document.dispatchEvent(new Event("inventory:ready"));
+            }
         } catch (error) { if (page === "login") show(error.message, true); else fail(error); }
     }
+    // Read-only lists (panel.js) reuse the same request helper and error handling.
+    globalThis.InventoryApi = { api, fail, ready: false };
     return { init };
 })();
 InventoryAuth.init();

@@ -6,6 +6,7 @@
     <title>Удалить товар</title>
     <link rel="stylesheet" href="/static/index_style.css">
     <script src="/static/auth.js" defer></script>
+    <script src="/static/panel.js" defer></script>
 </head>
 <body>
 <div class="app-shell"><aside class="sidebar">
@@ -18,6 +19,7 @@
 <main class="page-main">
   <div class="page-topbar"><span class="topbar-caption">РАБОЧЕЕ ПРОСТРАНСТВО</span><span class="topbar-status"><i></i> Основной склад</span></div>
   <header class="page-heading"><h1>Удалить товар</h1><p>Удаление товара из каталога и со всех полок.</p></header>
+  <div class="workspace-grid">
   <section class="content-card"><p class="hint">Товар будет удалён из каталога и со всех полок.</p>
 
     <form action="/api/v1/products/del_any" method="post" accept-charset="utf-8">
@@ -26,6 +28,8 @@
 
         <button class="danger" type="submit">Удалить</button>
     </form></section>
+  <section class="content-card list-card" data-list="products" aria-label="Добавленные товары"></section>
+  </div>
 </main></div>
 </body>
 </html>

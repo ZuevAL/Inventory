@@ -6,6 +6,7 @@
     <title>Создать полку</title>
     <link rel="stylesheet" href="/static/index_style.css">
     <script src="/static/auth.js" defer></script>
+    <script src="/static/panel.js" defer></script>
 </head>
 <body>
 <div class="app-shell"><aside class="sidebar">
@@ -18,12 +19,15 @@
 <main class="page-main">
   <div class="page-topbar"><span class="topbar-caption">РАБОЧЕЕ ПРОСТРАНСТВО</span><span class="topbar-status"><i></i> Основной склад</span></div>
   <header class="page-heading"><h1>Новая полка</h1><p>Создайте полку, чтобы организовать размещение товаров.</p></header>
+  <div class="workspace-grid">
   <section class="content-card"><form action="/api/v1/shelves/form" method="post" accept-charset="utf-8">
         <label for="code">Код полки</label>
         <input id="code" name="code" required autocomplete="off" autofocus>
 
         <button type="submit">Сохранить</button>
     </form></section>
+  <section class="content-card list-card" data-list="shelves" aria-label="Добавленные полки"></section>
+  </div>
 </main></div>
 </body>
 </html>

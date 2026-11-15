@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, Query
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -29,8 +29,12 @@ async def create_shelves(
 
 
 @router.get("/")
-async def read_shelves(db: AsyncSession = Depends(get_db)):
-    query = select(ShelfModel).order_by(ShelfModel.id).limit(5)
+async def read_shelves(
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=500)] = 5,
+    db: AsyncSession = Depends(get_db),
+):
+    query = select(ShelfModel).order_by(ShelfModel.id).offset(offset).limit(limit)
     result = await db.execute(query)
     shelves = result.scalars().all()
     return shelves

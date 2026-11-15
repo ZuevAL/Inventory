@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException, Query
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
@@ -29,8 +29,12 @@ async def create_product_form(
 
 
 @router.get("/")
-async def read_products(db: AsyncSession = Depends(get_db)):
-    query = select(ProductModel).order_by(ProductModel.id).limit(5)
+async def read_products(
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=500)] = 5,
+    db: AsyncSession = Depends(get_db),
+):
+    query = select(ProductModel).order_by(ProductModel.id).offset(offset).limit(limit)
     result = await db.execute(query)
     products = result.scalars().all()
     return products
