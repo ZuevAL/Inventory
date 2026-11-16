@@ -6,6 +6,7 @@
     <title>Изменить количество товара</title>
     <link rel="stylesheet" href="/static/index_style.css">
     <script src="/static/auth.js" defer></script>
+    <script src="/static/panel.js" defer></script>
 </head>
 <body>
 <div class="app-shell"><aside class="sidebar">
@@ -18,6 +19,7 @@
 <main class="page-main">
   <div class="page-topbar"><span class="topbar-caption">РАБОЧЕЕ ПРОСТРАНСТВО</span><span class="topbar-status"><i></i> Основной склад</span></div>
   <header class="page-heading"><h1>Изменить количество</h1><p>Пополните остаток или спишите нужное количество.</p></header>
+  <div class="workspace-grid">
   <section class="content-card"><p class="hint">Укажите положительное число для добавления товара или отрицательное — для списания.</p>
 
     <form action="/api/v1/stock/patch-form" method="post" accept-charset="utf-8">
@@ -32,6 +34,8 @@
 
         <button type="submit">Изменить</button>
     </form></section>
+  <section class="content-card list-card" data-list="stock" aria-label="Товары на полках"></section>
+  </div>
 </main></div>
 </body>
 </html>
