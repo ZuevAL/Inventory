@@ -25,6 +25,7 @@
         <label for="password">Пароль</label>
         <input id="password" name="password" type="password" required maxlength="128" autocomplete="current-password">
         <button type="submit">Войти</button>
+        <p><a href="/static/recovery.html">Забыли пароль?</a></p>
     </form>
     <form id="setup-form" method="post" action="/api/v1/auth/web/password/setup" hidden>
         <h2>Установите постоянный пароль</h2>

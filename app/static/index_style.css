@@ -78,6 +78,10 @@ td button { width: auto; min-height: 34px; margin: 0; padding: 6px 11px; font-si
 .temporary-result { margin: 18px 0; padding: 17px; border: 1px solid #d8e7dc; border-radius: 10px; background: #f4f8f5; }
 .temporary-result p { color: #69746c; }
 code { font-size: 16px; overflow-wrap: anywhere; }
+.recovery-code { display: block; margin: 16px 0; padding: 16px; border: 1px dashed #659174; border-radius: 8px; background: white; user-select: all; letter-spacing: .04em; }
+.code-approval { display: flex; align-items: flex-start; gap: 10px; }
+.code-approval input { width: 20px; min-height: 20px; flex: 0 0 20px; margin-top: 1px; }
+.security-history { margin-top: 24px; }
 @media (max-width: 760px) {
   .app-shell { grid-template-columns: 176px minmax(0, 1fr); }
   .sidebar { padding-right: 10px; padding-left: 10px; }

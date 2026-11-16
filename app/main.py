@@ -31,6 +31,8 @@ def create_app() -> FastAPI:
     @application.exception_handler(AuthError)
     async def auth_error_handler(request, exc: AuthError):
         headers = {"WWW-Authenticate": "Bearer"} if exc.status_code == 401 else {}
+        if exc.retry_after is not None:
+            headers["Retry-After"] = str(exc.retry_after)
         return JSONResponse(
             {"detail": exc.message, "code": exc.code},
             status_code=exc.status_code, headers=headers,
