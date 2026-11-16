@@ -10,7 +10,7 @@ from app.services.auth import AuthContext, authenticate_access
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-async def get_current_auth(
+async def get_current_session(
     request: Request,
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db),
@@ -26,6 +26,16 @@ async def get_current_auth(
         if request.method not in {"GET", "HEAD", "OPTIONS"}:
             require_csrf(request)
     return await authenticate_access(token, db)
+
+
+async def get_current_auth(
+    context: AuthContext = Depends(get_current_session),
+) -> AuthContext:
+    if context.user.recovery_required:
+        raise AuthError(
+            "recovery_setup_required", "Сохраните резервный код в разделе «Безопасность»", 403,
+        )
+    return context
 
 
 async def require_admin(context: AuthContext = Depends(get_current_auth)) -> AuthContext:

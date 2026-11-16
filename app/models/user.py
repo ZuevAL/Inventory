@@ -41,6 +41,15 @@ class User(Base):
         Integer, nullable=False, default=0, server_default="0",
     )
 
+    recovery_code_hash: Mapped[str | None] = mapped_column(String(64))
+    pending_recovery_hash: Mapped[str | None] = mapped_column(String(64))
+    pending_recovery_session_id: Mapped[str | None] = mapped_column(String(36))
+    pending_recovery_expires_at: Mapped[int | None] = mapped_column(Integer)
+
+    @property
+    def recovery_required(self) -> bool:
+        return self.role == "admin" and self.recovery_code_hash is None
+
     __table_args__ = (
         CheckConstraint(
             "role IN ('admin', 'worker')",

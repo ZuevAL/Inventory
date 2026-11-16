@@ -1,13 +1,12 @@
 import argparse
 import asyncio
-from time import time
 
-from sqlalchemy import select, text, update
+from sqlalchemy import select, text
 
 from app.core.security import generate_temporary_password, hash_password
 from app.db import AsyncSessionLocal, engine
-from app.models.auth_session import AuthSession
 from app.models.user import User
+from app.services.auth import _replace_password
 
 
 async def reset_admin_password(login: str) -> str:
@@ -27,18 +26,7 @@ async def reset_admin_password(login: str) -> str:
                 if user is None or user.role != "admin":
                     raise ValueError("Администратор с таким логином не найден")
 
-                user.password_hash = password_hash
-                user.must_change_password = True
-                user.credential_version += 1
-
-                await db.execute(
-                    update(AuthSession)
-                    .where(
-                        AuthSession.user_id == user.id,
-                        AuthSession.revoked_at.is_(None),
-                    )
-                    .values(revoked_at=int(time()))
-                )
+                await _replace_password(db, user, password_hash, True)
 
                 await db.commit()
                 return temporary_password

@@ -23,13 +23,18 @@ class AuthEnvironment:
     application: object
     session_factory: object
 
-    def create_user(self, login="worker_01", role="worker", temporary=False, password=TEST_PASSWORD):
+    def create_user(self, login="worker_01", role="worker", temporary=False, password=TEST_PASSWORD,
+                    recovery_ready=True):
         async def create():
             async with self.session_factory() as db:
                 user = User(
                     login=login, full_name="Тестовый пользователь", role=role,
                     password_hash=hash_password(password), must_change_password=temporary,
                 )
+                # Existing warehouse/auth tests use fully onboarded admins.
+                # Recovery tests explicitly opt out to exercise initial setup.
+                if role == "admin" and recovery_ready:
+                    user.recovery_code_hash = "f" * 64
                 db.add(user)
                 await db.commit()
                 return user.id

@@ -178,6 +178,11 @@ async def _replace_password(
     user.password_hash = password_hash
     user.must_change_password = must_change
     user.credential_version += 1
+    user.pending_recovery_hash = None
+    user.pending_recovery_session_id = None
+    user.pending_recovery_expires_at = None
+    if must_change:
+        user.recovery_code_hash = None
     await db.execute(update(AuthSession).where(
         AuthSession.user_id == user.id, AuthSession.revoked_at.is_(None),
     ).values(revoked_at=tokens.utc_timestamp()))

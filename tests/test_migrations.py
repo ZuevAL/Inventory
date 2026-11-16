@@ -26,7 +26,10 @@ def test_migration_preserves_existing_account_and_warehouse(tmp_path):
             "admin_01", "existing-hash-must-not-change", 0,
         )
         assert connection.execute("SELECT name, barcode FROM products").fetchone() == ("Existing product", "123")
-        assert connection.execute("SELECT version_num FROM alembic_version").fetchone()[0] == "c83170d591a2"
+        columns = {row[1] for row in connection.execute("PRAGMA table_info(users)")}
+        assert {"recovery_code_hash", "pending_recovery_hash", "pending_recovery_session_id",
+                "pending_recovery_expires_at"} <= columns
+        assert connection.execute("SELECT recovery_code_hash, pending_recovery_hash FROM users").fetchone() == (None, None)
         assert connection.execute("PRAGMA foreign_key_check").fetchall() == []
         assert "uq_sessions_one_open_per_user" in [row[1] for row in connection.execute("PRAGMA index_list(sessions)")]
 
@@ -36,5 +39,6 @@ def test_empty_database_migrates_to_head(tmp_path):
     migrate(database_path, "head")
     with sqlite3.connect(database_path) as connection:
         tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        assert {"users", "sessions", "products", "shelves", "shelf_stock", "alembic_version"} <= tables
+        assert {"users", "sessions", "products", "shelves", "shelf_stock", "alembic_version",
+                "recovery_events", "recovery_limits"} <= tables
         assert connection.execute("PRAGMA foreign_key_check").fetchall() == []

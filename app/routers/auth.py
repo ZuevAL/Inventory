@@ -9,7 +9,7 @@ from app.core.cookies import (
 )
 from app.core.errors import AuthError
 from app.db import get_db
-from app.dependencies import get_current_auth
+from app.dependencies import get_current_session
 from app.schemas.auth import (
     AuthResult, BrowserAuthResult, BrowserLoginConfirmRequest,
     LoginConfirmRequest, LoginConfirmationRequired, LoginRequest,
@@ -43,7 +43,7 @@ async def setup_password(data: PasswordSetupRequest, db: AsyncSession = Depends(
 @router.post("/password/change")
 async def change_password(
     data: PasswordChangeRequest, response: Response,
-    context: AuthContext = Depends(get_current_auth), db: AsyncSession = Depends(get_db),
+    context: AuthContext = Depends(get_current_session), db: AsyncSession = Depends(get_db),
 ):
     await service.change_password(
         context, data.current_password.get_secret_value(), data.new_password.get_secret_value(), db,
@@ -59,7 +59,7 @@ async def refresh(data: RefreshRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/logout", status_code=204)
 async def logout(
-    request: Request, context: AuthContext = Depends(get_current_auth),
+    request: Request, context: AuthContext = Depends(get_current_session),
     db: AsyncSession = Depends(get_db),
 ):
     authorization = request.headers.get("authorization")
@@ -71,7 +71,7 @@ async def logout(
 
 
 @router.get("/me", response_model=UserRead)
-async def me(context: AuthContext = Depends(get_current_auth)):
+async def me(context: AuthContext = Depends(get_current_session)):
     return context.user
 
 

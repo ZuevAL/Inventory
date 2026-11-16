@@ -43,6 +43,7 @@ class UserRead(BaseModel):
     full_name: str
     role: Literal["admin", "worker"]
     must_change_password: bool
+    recovery_required: bool
 
 
 class UserCreateResponse(BaseModel):

@@ -16,6 +16,7 @@ from app.models.shelf import Shelf
 from app.models.shelf_stock import ShelfStock
 from app.models.user import User
 from app.models.auth_session import AuthSession
+from app.models.recovery import RecoveryEvent, RecoveryLimit
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

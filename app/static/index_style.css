@@ -92,6 +92,10 @@ code { font-size: 16px; overflow-wrap: anywhere; }
 @media (max-width: 1180px) {
   .workspace-grid { grid-template-columns: minmax(0, 1fr); }
 }
+.recovery-code { display: block; margin: 16px 0; padding: 16px; border: 1px dashed #659174; border-radius: 8px; background: white; user-select: all; letter-spacing: .04em; }
+.code-approval { display: flex; align-items: flex-start; gap: 10px; }
+.code-approval input { width: 20px; min-height: 20px; flex: 0 0 20px; margin-top: 1px; }
+.security-history { margin-top: 24px; }
 @media (max-width: 760px) {
   .app-shell { grid-template-columns: 176px minmax(0, 1fr); }
   .sidebar { padding-right: 10px; padding-left: 10px; }
