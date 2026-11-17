@@ -393,11 +393,21 @@ const InventoryAuth = (() => {
         document.addEventListener("submit", blocker, true);
         try {
             let ready = false;
+
             if (page === "login") await initLogin();
             else if (page === "recovery") await initRecovery();
-            else await initProtected(page);
+            else ready = await initProtected(page);
+
             document.removeEventListener("submit", blocker, true);
-        } catch (error) { if (page === "login" || page === "recovery") show(error.message, true); else fail(error); }
+
+            if (ready) {
+                globalThis.InventoryApi.ready = true;
+                document.dispatchEvent(new Event("inventory:ready"));
+            }
+        } catch (error) {
+            if (page === "login" || page === "recovery") show(error.message, true);
+            else fail(error);
+        }
     }
     // Read-only lists (panel.js) reuse the same request helper and error handling.
     globalThis.InventoryApi = { api, fail, ready: false };
