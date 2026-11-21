@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -27,6 +28,15 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     application.include_router(api_router, prefix=settings.api_v1_prefix)
+
+    origins = [origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()]
+    if origins:
+        application.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_methods=["GET", "POST"],
+            allow_headers=["Authorization", "Content-Type"],
+        )
 
     @application.exception_handler(AuthError)
     async def auth_error_handler(request, exc: AuthError):

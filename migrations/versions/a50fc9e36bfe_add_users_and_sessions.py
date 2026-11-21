@@ -27,7 +27,7 @@ def upgrade() -> None:
     sa.Column('full_name', sa.String(length=255), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('role', sa.String(length=10), server_default='worker', nullable=False),
-    sa.Column('must_change_password', sa.Boolean(), server_default=sa.text('1'), nullable=False),
+    sa.Column('must_change_password', sa.Boolean(), server_default=sa.true(), nullable=False),
     sa.CheckConstraint("role IN ('admin', 'worker')", name='ck_users_role'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('login')
@@ -42,7 +42,11 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index('uq_sessions_one_open_per_user', 'sessions', ['user_id'], unique=True, sqlite_where=sa.text('revoked_at IS NULL'))
+    op.create_index(
+        'uq_sessions_one_open_per_user', 'sessions', ['user_id'], unique=True,
+        sqlite_where=sa.text('revoked_at IS NULL'),
+        postgresql_where=sa.text('revoked_at IS NULL'),
+    )
     # ### end Alembic commands ###
 
 

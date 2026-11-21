@@ -2,36 +2,41 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 from app.db import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from app.models.product import Product as ProductModel
 from app.models.shelf import Shelf as ShelfModel
 from app.models.shelf_stock import ShelfStock as ShelfStockModel
 from app.schemas.shelf_stock import SchemaShelfStock
 from app.dependencies import get_current_auth, require_admin
+from app.services.warehouse import MAX_STOCK, warehouse_insert, warehouse_write
 
 
 router = APIRouter(prefix="/stock", tags=['Наличие товаров'], dependencies=[Depends(get_current_auth)])
 
 @router.post("/")
 async def create_stock(stock: SchemaShelfStock, db: AsyncSession = Depends(get_db)):
-    query = select(ProductModel).where(ProductModel.barcode == stock.product_barcode)
-    result = await db.execute(query)
-    product = result.scalar_one_or_none()
+    if not 0 <= stock.quantity <= MAX_STOCK:
+        raise HTTPException(422, "Недопустимое количество товара")
+    async with warehouse_write(db):
+        product_id = await db.scalar(select(ProductModel.id).where(
+            ProductModel.barcode == stock.product_barcode,
+        ).with_for_update(read=True, key_share=True))
+        if product_id is None:
+            raise HTTPException(404, "Продукт не найден")
 
-    if product is None:
-        raise HTTPException(status_code=404, detail="Продукт не найден")
+        shelf_id = await db.scalar(select(ShelfModel.id).where(ShelfModel.code == stock.shelf_code))
+        if shelf_id is None:
+            raise HTTPException(404, "Полка не найдена")
 
-    query = select(ShelfModel).where(ShelfModel.code == stock.shelf_code)
-    result = await db.execute(query)
-    shelf = result.scalar_one_or_none()
-    if shelf is None:
-        raise HTTPException(status_code=404, detail="Полка не найдена")
-
-    db_stock = ShelfStockModel(product_id=product.id, shelf_id=shelf.id, quantity=stock.quantity)
-    db.add(db_stock)
-    await db.commit()
-    await db.refresh(db_stock)
-    return db_stock
+        insert = warehouse_insert(db, ShelfStockModel).values(
+            product_id=product_id, shelf_id=shelf_id, quantity=stock.quantity,
+        ).on_conflict_do_nothing(
+            index_elements=[ShelfStockModel.product_id, ShelfStockModel.shelf_id],
+        ).returning(ShelfStockModel)
+        row = await db.scalar(insert)
+        if row is None:
+            raise HTTPException(409, "Товар уже добавлен на эту полку")
+        return row
 
 
 @router.post("/form")
@@ -107,19 +112,19 @@ async def delete_from_shelf_form(
 @router.patch("/")
 async def update_quantity_in_shelves(barcode:str, shelf_code:str, adding:int,
                                       db: AsyncSession =Depends (get_db)):
-    changing_product = await db.scalar(select(ProductModel.id).where(ProductModel.barcode == barcode))
-    changing_shelf = await db.scalar(select(ShelfModel.id).where(ShelfModel.code == shelf_code))
-    query = select(ShelfStockModel).where(ShelfStockModel.shelf_id == changing_shelf, \
-                                          ShelfStockModel.product_id == changing_product)
-    result = await db.execute(query)
-    product = result.scalar_one_or_none()
-
-    if product is None:
-                raise HTTPException(status_code=404, detail="Товар не найден")
-
-
-    product.quantity += adding
-    await db.commit()
+    if not -MAX_STOCK <= adding <= MAX_STOCK:
+        raise HTTPException(409, "Недопустимое изменение количества товара")
+    product_id = select(ProductModel.id).where(ProductModel.barcode == barcode).scalar_subquery()
+    shelf_id = select(ShelfModel.id).where(ShelfModel.code == shelf_code).scalar_subquery()
+    stock = (ShelfStockModel.product_id == product_id, ShelfStockModel.shelf_id == shelf_id)
+    async with warehouse_write(db):
+        updated_id = await db.scalar(update(ShelfStockModel).where(
+            *stock, ShelfStockModel.quantity >= -adding, ShelfStockModel.quantity <= MAX_STOCK - adding,
+        ).values(quantity=ShelfStockModel.quantity + adding).returning(ShelfStockModel.id))
+        if updated_id is None:
+            if await db.scalar(select(ShelfStockModel.id).where(*stock)) is None:
+                raise HTTPException(404, "Товар не найден")
+            raise HTTPException(409, "Изменение выводит остаток на полке за допустимые пределы")
 
 
 @router.post("/patch-form")

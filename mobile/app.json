@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Инвентаризация",
+    "slug": "inventory-mobile",
+    "scheme": "inventory-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.inventory.warehouse",
+      "blockedPermissions": ["android.permission.RECORD_AUDIO"]
+    },
+    "ios": {
+      "bundleIdentifier": "com.inventory.warehouse"
+    },
+    "plugins": [
+      "expo-router",
+      ["expo-camera", {
+        "cameraPermission": "Разрешите доступ к камере для сканирования складских кодов.",
+        "recordAudioAndroid": false
+      }],
+      "expo-secure-store"
+    ],
+    "web": { "bundler": "metro" }
+  }
+}

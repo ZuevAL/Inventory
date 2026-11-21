@@ -1,10 +1,10 @@
 import argparse
 import asyncio
 
-from sqlalchemy import select, text
+from sqlalchemy import select
 
 from app.core.security import generate_temporary_password, hash_password
-from app.db import AsyncSessionLocal, engine
+from app.db import AsyncSessionLocal, begin_auth_write, engine
 from app.models.user import User
 from app.services.auth import _replace_password
 
@@ -17,7 +17,7 @@ async def reset_admin_password(login: str) -> str:
         async with AsyncSessionLocal() as db:
             try:
                 # Сериализуем изменение, как и другие операции с авторизацией.
-                await db.execute(text("BEGIN IMMEDIATE"))
+                await begin_auth_write(db)
 
                 user = await db.scalar(
                     select(User).where(User.login == login.lower())

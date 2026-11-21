@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     debug: bool = False
     api_v1_prefix: str = "/api/v1"
     database_url: str = "sqlite+aiosqlite:///./sql_app.db"
+    cors_origins: str = ""
 
     jwt_secret_key: SecretStr = Field(min_length=32)
     jwt_algorithm: Literal["HS256"] = "HS256"
