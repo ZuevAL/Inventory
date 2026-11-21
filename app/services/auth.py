@@ -4,7 +4,7 @@ from secrets import compare_digest
 from uuid import uuid4
 
 from pwdlib.exceptions import UnknownHashError
-from sqlalchemy import select, text, update
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
@@ -12,6 +12,7 @@ from app.core import tokens
 from app.core.config import settings
 from app.core.errors import AuthError
 from app.core.security import generate_temporary_password, hash_password, verify_password
+from app.db import begin_auth_write
 from app.models.auth_session import AuthSession
 from app.models.user import User
 from app.schemas.auth import (
@@ -31,11 +32,11 @@ class AuthContext:
 
 @asynccontextmanager
 async def auth_transaction(db: AsyncSession):
-    """Serialize SQLite auth writes; callers must not have pending business changes."""
+    """Serialize auth writes after ending any read-only dependency transaction."""
     if db.in_transaction():
         await db.rollback()  # End the read-only transaction used by auth dependencies.
     try:
-        await db.execute(text("BEGIN IMMEDIATE"))
+        await begin_auth_write(db)
         yield
         await db.commit()
     except BaseException:

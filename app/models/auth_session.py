@@ -47,4 +47,5 @@ Index(
     AuthSession.user_id,
     unique=True,
     sqlite_where=AuthSession.revoked_at.is_(None),
+    postgresql_where=AuthSession.revoked_at.is_(None),
 )

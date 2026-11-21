@@ -6,7 +6,9 @@ from sqlalchemy import select, delete
 from app.models import Product as ProductModel
 from app.schemas.products import SchemaProduct
 from app.models.shelf_stock import ShelfStock as ShelfStockModel
+from app.models.warehouse import WarehouseOrderLine
 from app.dependencies import get_current_auth, require_admin
+from app.services.warehouse import warehouse_write
 
 router = APIRouter(prefix="/products", tags=['Продукты'], dependencies=[Depends(get_current_auth)])
 
@@ -42,16 +44,16 @@ async def read_products(
 
 @router.delete("/", dependencies=[Depends(require_admin)])
 async def delete_product(barcode:str, db: AsyncSession = Depends(get_db)):
-    query = select(ProductModel).where(ProductModel.barcode == barcode)
-    result = await db.execute(query)
-    product = result.scalar_one_or_none()
-    if product is None :
-        raise HTTPException(status_code=404, detail="Товар не найден")
-
-    await db.execute(delete(ShelfStockModel).where(ShelfStockModel.product_id == product.id))
-    
-    await db.delete(product)
-    await db.commit()
+    async with warehouse_write(db):
+        product = await db.scalar(select(ProductModel).where(ProductModel.barcode == barcode).with_for_update())
+        if product is None:
+            raise HTTPException(404, "Товар не найден")
+        if await db.scalar(select(WarehouseOrderLine.id).where(
+            WarehouseOrderLine.product_id == product.id,
+        ).limit(1)) is not None:
+            raise HTTPException(409, "Товар используется в заказах")
+        await db.execute(delete(ShelfStockModel).where(ShelfStockModel.product_id == product.id))
+        await db.delete(product)
 
 
 @router.post("/del_any", dependencies=[Depends(require_admin)])

@@ -1,4 +1,4 @@
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.concurrency import run_in_threadpool
@@ -7,6 +7,7 @@ from app.core.security import (
     generate_temporary_password,
     hash_password,
 )
+from app.db import begin_auth_write
 from app.models.user import User
 from app.schemas.users import (
     UserCreate,
@@ -24,13 +25,13 @@ class FirstAdminAlreadyExists(Exception):
 
 
 async def create_first_admin(data: UserCreate, db: AsyncSession) -> UserCreateResponse:
-    """Local bootstrap only; serialize the check and insert on SQLite."""
+    """Local bootstrap only. Serialize the admin check and insert."""
     if data.role != "admin":
         raise ValueError("Первый пользователь должен быть администратором")
     if db.in_transaction():
         await db.rollback()
     try:
-        await db.execute(text("BEGIN IMMEDIATE"))
+        await begin_auth_write(db)
         existing_admin_id = await db.scalar(
             select(User.id).where(User.role == "admin").limit(1)
         )
